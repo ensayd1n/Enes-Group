@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 flex flex-col min-h-screen">
+    <header class="bg-yellow-300 text-white w-full">
+        <nav class="container mx-auto px-4 py-2 flex justify-between items-center">
+  <div>
+    <a href="/" class="hover:text-gray-300">
+      <img src="/logo.png" class="h-12 w-12" alt="Logo">
+    </a>
+  </div>
+  <div class="flex items-center space-x-4"> 
+    <div class="relative inline-block text-right"> 
+      <select id="options" name="options" class="appearance-none block w-full px-4 py-2 pr-8 leading-tight text-white bg-transparent focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 font-Helvetica">
+        <option value="1" class="text-black font-normal">Services</option>
+        <option value="2" class="text-black font-normal">Youtube Converter</option>
+        <option value="3" class="text-black font-normal">Document Converter</option>
+        <option value="4" class="text-black font-normal">Invoicer</option>
+      </select>
+      <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-white">
+        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+      </div>
+    </div>
+    <a href="/profile" class="font-Helvetica hover:text-gray-50">
+      <img src="/anonimAvatar.png" class="h-10 w-10" alt="Profile">
+    </a>
+  </div>
+</nav>
+    </header>
+     <script>
+        const selectElement = document.getElementById('options');
+        selectElement.addEventListener('change', function() {
+            
+            const selectedValue = this.value;
+             if (selectedValue === '2') {
+                window.location.href = 'mp3-converter';
+            }
+            if (selectedValue === '3') {
+                window.location.href = 'document-converter';
+            }
+            if (selectedValue === '4') {
+                window.location.href = 'invoicer';
+            }
+        });
+    </script>
+    <footer class="bg-yellow-300 text-white w-full fixed bottom-0 left-0">
+        <nav class="container mx-auto px-4 py-2 flex justify-between items-center">
+            <div class="text-sm">
+                © 2024 Your Company. All rights reserved.
+            </div>
+            <div class="space-x-4">
+                <a href="#" class="font-light hover:text-gray-50">○ Developed by ensayd1in</a>
+            </div>
+        </nav>
+    </footer>
+    <main class="container mx-auto px-4 py-6 flex-grow">
+        {{{body}}}
+    </main>
+</body>
+</html>
