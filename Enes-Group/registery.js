@@ -80,17 +80,17 @@ async function userLoginVerification(email, password) {
   try {
     const userExists = await checkUser(email, password);
 
-    if (userExists) {
+    if (userExists!=null) {
       console.log("The user exists in the database and its existence is verified.");
-      return true;
+      return userExists;
     } else {
       console.log("User does not exist.");
-      return false;
+      return null;
     }
 
   } catch (error) {
     console.error('An error occurred during verification:', error);
-    return false;
+    return null;
   }
 }
 

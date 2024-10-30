@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-50 flex flex-col min-h-screen">
-    <header class="bg-yellow-300 text-white w-full">
+    <header class="bg-yellow-400 text-white w-full">
         <nav class="container mx-auto px-4 py-2 flex justify-between items-center">
   <div>
     <a href="/" class="hover:text-gray-300">
@@ -21,6 +21,7 @@
         <option value="2" class="text-black font-normal">Youtube Converter</option>
         <option value="3" class="text-black font-normal">Document Converter</option>
         <option value="4" class="text-black font-normal">Invoicer</option>
+        <option value="5" class="text-black font-normal">Cv Maker</option>
       </select>
       <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-white">
         <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
@@ -37,18 +38,21 @@
         selectElement.addEventListener('change', function() {
             
             const selectedValue = this.value;
-             if (selectedValue === '2') {
+            if (selectedValue === '2') {
                 window.location.href = 'mp3-converter';
             }
-            if (selectedValue === '3') {
+            else if (selectedValue === '3') {
                 window.location.href = 'document-converter';
             }
-            if (selectedValue === '4') {
+            else if (selectedValue === '4') {
                 window.location.href = 'invoicer';
+            }
+            else if (selectedValue === '5') {
+                window.location.href = 'cv-maker';
             }
         });
     </script>
-    <footer class="bg-yellow-300 text-white w-full fixed bottom-0 left-0">
+    <footer class="bg-yellow-400 text-white w-full fixed bottom-0 left-0">
         <nav class="container mx-auto px-4 py-2 flex justify-between items-center">
             <div class="text-sm">
                 © 2024 Your Company. All rights reserved.

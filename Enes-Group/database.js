@@ -96,6 +96,7 @@ async function saveUser(name, lastName, birthday, email, password,userCode) {
       Password: password,
       Registery_Confirmation_Code:userCode,
       Registery_Date:new Date(),
+      Authority:'User'
     };
 
     const db = mongoose.connection;
@@ -131,14 +132,14 @@ async function checkUser(email, password) {
     const result = await collection.findOne({ Email: email, Password: password });
     if (result) {
       console.log('Found document:');
-      return true;
+      return result.Authority;
     } else {
       console.log('No document found.');
-      return false;
+      return null;
     }
 
   } catch (error) {
-    return false;
+    return null;
   }
 }
 

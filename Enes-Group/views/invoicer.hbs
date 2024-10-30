@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoicing Page</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-8">
+  <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
+    <h1 class="text-2xl font-bold text-center mb-4">INVOICING PAGE</h1>
+
+    <h4 class="text-xl font-bold bg-yellow-300 text-center">OUR COMPANY</h4>
+    <div class="mb-6">
+      <label class="block text-gray-700 font-bold mb-2 mt-4">Company Logo</label>
+      <input type="file" id="logo" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 font-bold mb-2">Company Name</label>
+      <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="Company Name">
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 font-bold mb-2">Company Address</label>
+      <textarea class="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="Company Address"></textarea>
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 font-bold mb-2">Tax Number</label>
+      <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="Tax Number">
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 font-bold mb-2">CRS Number</label>
+      <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="CRS Number">
+    </div>
+
+    <div class="mb-4">
+      <h4 class="text-xl font-bold bg-yellow-300 text-center">TARGET COMPANY</h4>
+      <label class="block text-gray-700 font-bold mb-2 mt-4">Target Name</label>
+      <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="Target Name">
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 font-bold mb-2">Target Address</label>
+      <textarea class="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="Target Address"></textarea>
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 font-bold mb-2">Tax Office Number</label>
+      <input type="text" class="w-2/3 px-4 py-2 border border-gray-300 rounded-md" placeholder="Tax Office Number">
+    </div>
+
+    <div class="mb-4 items-center">
+      <label class="block text-gray-700 font-bold mb-2 mr-4">Invoice Number</label>
+      <div class="mb-4 items-center flex">
+        <input id="invoiceNumber" type="text" class="w-2/3 px-4 py-2 border border-gray-300 rounded-md" placeholder="Invoice Number">
+        <div class="flex items-center ml-4">
+          <input id="auto-generate" type="checkbox" class="mr-2 transform scale-125" onclick="toggleInvoiceNumber()">
+          <label for="auto-generate" class="text-gray-700 font-bold text-lg">Auto Generate</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700 font-bold mb-2">Invoice Date</label>
+      <input type="date" class="w-2/3 px-4 py-2 border border-gray-300 rounded-md">
+    </div>
+
+    <div>
+      <h4 class="text-xl font-bold bg-yellow-300 text-center mb-4">PRODUCT LIST</h4>
+
+      <div class="mb-4 flex items-center space-x-4">
+        <label class="block text-gray-700 font-bold">To change the price of all products:</label>
+        <select id="currency-selector" class="w-1/7 px-4 py-2 border border-gray-300 rounded-md">
+          <option value="TRY">TL</option>
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="RUB">RUB</option>
+          <option value="CNY">CNY</option>
+        </select>
+        <button onclick="changeAllPrices()" class="w-1/2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Change All Prices to Selected Currency</button>
+      </div>
+
+      <div id="product-list" class="space-y-4">
+        <div class="flex items-center space-x-2">
+          <input type="text" class="w-2/3 px-4 py-2 border border-gray-300 rounded-md" placeholder="Product Name">
+          <div class="flex items-center space-x-2 w-1/3">
+            <input type="number" class="w-2/3 px-4 py-2 border border-gray-300 rounded-md" placeholder="Price" oninput="calculateTotal()">
+            <select class="w-1/3 px-4 py-2 border border-gray-300 rounded-md" onchange="calculateTotal()">
+              <option value="TRY">TL</option>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="RUB">RUB</option>
+              <option value="CNY">CNY</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <button onclick="addProduct()" class="mt-4 ml-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">Add Product</button>
+    </div>
+
+    <div class="mt-6 flex justify-end items-center space-x-4">
+  <h2 class="text-xl font-bold">Total: <span id="total-price">0.00</span></h2>
+  <select id="total-currency" class="font-bold px-4 py-2 border border-gray-300 rounded-md" onchange="calculateTotal()">
+    <option value="TRY" class="font-bold" selected>TL</option>
+    <option value="USD" class="font-bold">USD</option>
+    <option value="EUR" class="font-bold">EUR</option>
+    <option value="RUB" class="font-bold">RUB</option>
+    <option value="CNY" class="font-bold">CNY</option>
+  </select>
+</div>
+
+    <div class="mt-6 text-center flex justify-end">
+      <button onclick="calculateTotal()" class="px-6 py-2 bg-blue-500 text-white text-xl font-bold rounded-md hover:bg-blue-600">Save Invoice</button>
+    </div>
+  </div>
+
+  <script>
+    async function exchangeRateData() {
+        try {
+            const response = await fetch('/get-exchange-rate-data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            if (!response.ok) throw new Error('Bir hata oluştu');
+
+            const result = await response.json();
+            console.log(result)
+            return result ?? {};
+        } catch (error) {
+            console.error('Hata:', error);
+            return {};
+        }
+    }
+
+    function addProduct() {
+        const productDiv = document.createElement("div");
+        productDiv.className = "flex items-center space-x-4 mt-4";
+        productDiv.innerHTML = `
+            <input type="text" class="w-2/3 px-4 py-2 border border-gray-300 rounded-md" placeholder="Product Name" oninput="calculateTotal()">
+            <input type="number" class="w-1/5 px-4 py-2 border border-gray-300 rounded-md" placeholder="Price" oninput="calculateTotal()">
+            <select class="w-1/5 px-4 py-2 border border-gray-300 rounded-md" onchange="calculateTotal()">
+                <option value="TRY">TL</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="RUB">RUB</option>
+                <option value="CNY">CNY</option>
+            </select>
+        `;
+        document.getElementById("product-list").appendChild(productDiv);
+    }
+
+  async function calculateTotal() {
+    const exchangeRates = await exchangeRateData(); 
+    const selectedCurrency = document.getElementById("total-currency").value;
+    let total = 0;
+
+    const products = document.querySelectorAll("#product-list input[type='number']");
+    const currencySelectors = document.querySelectorAll("#product-list select");
+
+    products.forEach((product, index) => {
+        const price = parseFloat(product.value) || 0;
+        const currentCurrency = currencySelectors[index].value;
+
+        if (price > 0) {
+            if (currentCurrency !== selectedCurrency && exchangeRates[currentCurrency] && exchangeRates[selectedCurrency]) {
+                const convertedPrice = price * (exchangeRates[selectedCurrency] / exchangeRates[currentCurrency]);
+                total += convertedPrice;
+            } else {
+                total += price;
+            }
+        }
+    });
+    document.getElementById("total-price").innerText = total.toFixed(2);
+}
+
+
+    async function changeAllPrices() {
+        const exchangeRates = await exchangeRateData();
+        const selectedCurrency = document.getElementById("currency-selector").value;
+        const products = document.querySelectorAll("#product-list input[type='number']");
+        const currencySelectors = document.querySelectorAll("#product-list select");
+
+        if (!exchangeRates[selectedCurrency]) {
+            return;
+        }
+
+        products.forEach((product, index) => {
+            const price = parseFloat(product.value) || 0;
+            const currentCurrency = currencySelectors[index].value;
+
+            if (exchangeRates[currentCurrency] && exchangeRates[selectedCurrency]) {
+                const newPrice = price * (exchangeRates[selectedCurrency] / exchangeRates[currentCurrency]);
+                product.value = newPrice.toFixed(2);
+                currencySelectors[index].value = selectedCurrency;
+            }
+        });
+
+        calculateTotal();
+    }
+
+    function toggleInvoiceNumber() {
+        const invoiceNumberInput = document.getElementById("invoiceNumber");
+        if (document.getElementById("auto-generate").checked) {
+            invoiceNumberInput.value = "INV-" + Math.floor(Math.random() * 10000);
+            invoiceNumberInput.disabled = true;
+        } else {
+            invoiceNumberInput.disabled = false;
+            invoiceNumberInput.value = "";
+        }
+    }
+</script>
+
+</body>
+</html>
