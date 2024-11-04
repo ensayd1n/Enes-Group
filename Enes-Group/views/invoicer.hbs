@@ -17,33 +17,33 @@
     </div>
     <div class="mb-4">
       <label class="block text-gray-700 font-bold mb-2">Company Name</label>
-      <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="Company Name">
+      <input type="text" id="companyName" class="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="Company Name">
     </div>
     <div class="mb-4">
       <label class="block text-gray-700 font-bold mb-2">Company Address</label>
-      <textarea class="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="Company Address"></textarea>
+      <textarea id="companyAddress" class="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="Company Address"></textarea>
     </div>
     <div class="mb-4">
       <label class="block text-gray-700 font-bold mb-2">Tax Number</label>
-      <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="Tax Number">
+      <input type="text" id="companyTaxNumber" class="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="Tax Number">
     </div>
     <div class="mb-4">
       <label class="block text-gray-700 font-bold mb-2">CRS Number</label>
-      <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="CRS Number">
+      <input type="text" id="companyCrsNumber" class="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="CRS Number">
     </div>
 
     <div class="mb-4">
       <h4 class="text-xl font-bold bg-yellow-300 text-center">TARGET COMPANY</h4>
       <label class="block text-gray-700 font-bold mb-2 mt-4">Target Name</label>
-      <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="Target Name">
+      <input type="text" id="targetCompanyName" class="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="Target Name">
     </div>
     <div class="mb-4">
       <label class="block text-gray-700 font-bold mb-2">Target Address</label>
-      <textarea class="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="Target Address"></textarea>
+      <textarea class="w-full px-4 py-2 border border-gray-300 rounded-md" id="targetCompanyAddress" placeholder="Target Address"></textarea>
     </div>
     <div class="mb-4">
-      <label class="block text-gray-700 font-bold mb-2">Tax Office Number</label>
-      <input type="text" class="w-2/3 px-4 py-2 border border-gray-300 rounded-md" placeholder="Tax Office Number">
+      <label class="block text-gray-700 font-bold mb-2">Tax Number</label>
+      <input type="text" class="w-2/3 px-4 py-2 border border-gray-300 rounded-md" id="targetTaxNumber" placeholder="Tax Office Number">
     </div>
 
     <div class="mb-4 items-center">
@@ -59,7 +59,7 @@
 
     <div class="mb-4">
       <label class="block text-gray-700 font-bold mb-2">Invoice Date</label>
-      <input type="date" class="w-2/3 px-4 py-2 border border-gray-300 rounded-md">
+      <input type="date" class="w-2/3 px-4 py-2 border border-gray-300 rounded-md" id="invoiceDate">
     </div>
 
     <div>
@@ -78,18 +78,18 @@
       </div>
 
       <div id="product-list" class="space-y-4">
-        <div class="flex items-center space-x-2">
-          <input type="text" class="w-2/3 px-4 py-2 border border-gray-300 rounded-md" placeholder="Product Name">
-          <div class="flex items-center space-x-2 w-1/3">
-            <input type="number" class="w-2/3 px-4 py-2 border border-gray-300 rounded-md" placeholder="Price" oninput="calculateTotal()">
-            <select class="w-1/3 px-4 py-2 border border-gray-300 rounded-md" onchange="calculateTotal()">
-              <option value="TRY">TL</option>
-              <option value="USD">USD</option>
-              <option value="EUR">EUR</option>
-              <option value="RUB">RUB</option>
-              <option value="CNY">CNY</option>
-            </select>
-          </div>
+        <div class="product-item flex items-center space-x-2">
+            <input type="text" name="productName" class="w-2/3 px-4 py-2 border border-gray-300 rounded-md" placeholder="Product Name">
+            <div class="flex items-center space-x-2 w-1/3">
+                <input type="number" name="productPrice" class="w-2/3 px-4 py-2 border border-gray-300 rounded-md" placeholder="Price" oninput="calculateTotal()">
+                <select name="currency" class="w-1/3 px-4 py-2 border border-gray-300 rounded-md" onchange="calculateTotal()">
+                    <option value="TRY">TL</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="RUB">RUB</option>
+                    <option value="CNY">CNY</option>
+                </select>
+            </div>
         </div>
       </div>
 
@@ -97,18 +97,18 @@
     </div>
 
     <div class="mt-6 flex justify-end items-center space-x-4">
-  <h2 class="text-xl font-bold">Total: <span id="total-price">0.00</span></h2>
-  <select id="total-currency" class="font-bold px-4 py-2 border border-gray-300 rounded-md" onchange="calculateTotal()">
-    <option value="TRY" class="font-bold" selected>TL</option>
-    <option value="USD" class="font-bold">USD</option>
-    <option value="EUR" class="font-bold">EUR</option>
-    <option value="RUB" class="font-bold">RUB</option>
-    <option value="CNY" class="font-bold">CNY</option>
-  </select>
-</div>
+      <h2 class="text-xl font-bold">Total: <span id="total-price">0.00</span></h2>
+      <select id="total-currency" class="font-bold px-4 py-2 border border-gray-300 rounded-md" onchange="calculateTotal()">
+        <option value="TRY" class="font-bold" selected>TL</option>
+        <option value="USD" class="font-bold">USD</option>
+        <option value="EUR" class="font-bold">EUR</option>
+        <option value="RUB" class="font-bold">RUB</option>
+        <option value="CNY" class="font-bold">CNY</option>
+      </select>
+    </div>
 
     <div class="mt-6 text-center flex justify-end">
-      <button onclick="calculateTotal()" class="px-6 py-2 bg-blue-500 text-white text-xl font-bold rounded-md hover:bg-blue-600">Save Invoice</button>
+      <button onclick="generateAndDownloadPDF()" class="px-6 py-2 bg-blue-500 text-white text-xl font-bold rounded-md hover:bg-blue-600">Save Invoice</button>
     </div>
   </div>
 
@@ -119,94 +119,134 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' }
             });
-            if (!response.ok) throw new Error('Bir hata oluştu');
+            if (!response.ok) throw new Error('An error occurred');
 
             const result = await response.json();
-            console.log(result)
             return result ?? {};
         } catch (error) {
-            console.error('Hata:', error);
+            console.error('Error:', error);
             return {};
         }
     }
 
     function addProduct() {
         const productDiv = document.createElement("div");
-        productDiv.className = "flex items-center space-x-4 mt-4";
+        productDiv.className = "product-item flex items-center space-x-2 mt-4";
         productDiv.innerHTML = `
-            <input type="text" class="w-2/3 px-4 py-2 border border-gray-300 rounded-md" placeholder="Product Name" oninput="calculateTotal()">
-            <input type="number" class="w-1/5 px-4 py-2 border border-gray-300 rounded-md" placeholder="Price" oninput="calculateTotal()">
-            <select class="w-1/5 px-4 py-2 border border-gray-300 rounded-md" onchange="calculateTotal()">
-                <option value="TRY">TL</option>
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="RUB">RUB</option>
-                <option value="CNY">CNY</option>
-            </select>
+            <input type="text" name="productName" class="w-2/3 px-4 py-2 border border-gray-300 rounded-md" placeholder="Product Name" oninput="calculateTotal()">
+            <div class="flex items-center space-x-2 w-1/3">
+                <input type="number" name="productPrice" class="w-2/3 px-4 py-2 border border-gray-300 rounded-md" placeholder="Price" oninput="calculateTotal()">
+                <select name="currency" class="w-1/3 px-4 py-2 border border-gray-300 rounded-md" onchange="calculateTotal()">
+                    <option value="TRY">TL</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="RUB">RUB</option>
+                    <option value="CNY">CNY</option>
+                </select>
+            </div>
         `;
         document.getElementById("product-list").appendChild(productDiv);
     }
 
-  async function calculateTotal() {
-    const exchangeRates = await exchangeRateData(); 
-    const selectedCurrency = document.getElementById("total-currency").value;
-    let total = 0;
-
-    const products = document.querySelectorAll("#product-list input[type='number']");
-    const currencySelectors = document.querySelectorAll("#product-list select");
-
-    products.forEach((product, index) => {
-        const price = parseFloat(product.value) || 0;
-        const currentCurrency = currencySelectors[index].value;
-
-        if (price > 0) {
-            if (currentCurrency !== selectedCurrency && exchangeRates[currentCurrency] && exchangeRates[selectedCurrency]) {
-                const convertedPrice = price * (exchangeRates[selectedCurrency] / exchangeRates[currentCurrency]);
-                total += convertedPrice;
-            } else {
-                total += price;
-            }
+    function toggleInvoiceNumber() {
+        const autoGenerateCheckbox = document.getElementById("auto-generate");
+        const invoiceNumberInput = document.getElementById("invoiceNumber");
+        if (autoGenerateCheckbox.checked) {
+            invoiceNumberInput.value = Math.floor(Math.random() * 100000);
+            invoiceNumberInput.disabled = true;
+        } else {
+            invoiceNumberInput.value = '';
+            invoiceNumberInput.disabled = false;
         }
-    });
-    document.getElementById("total-price").innerText = total.toFixed(2);
-}
+    }
 
-
-    async function changeAllPrices() {
-        const exchangeRates = await exchangeRateData();
-        const selectedCurrency = document.getElementById("currency-selector").value;
-        const products = document.querySelectorAll("#product-list input[type='number']");
-        const currencySelectors = document.querySelectorAll("#product-list select");
-
-        if (!exchangeRates[selectedCurrency]) {
-            return;
-        }
-
-        products.forEach((product, index) => {
-            const price = parseFloat(product.value) || 0;
-            const currentCurrency = currencySelectors[index].value;
-
-            if (exchangeRates[currentCurrency] && exchangeRates[selectedCurrency]) {
-                const newPrice = price * (exchangeRates[selectedCurrency] / exchangeRates[currentCurrency]);
-                product.value = newPrice.toFixed(2);
-                currencySelectors[index].value = selectedCurrency;
-            }
+    function calculateTotal() {
+        let total = 0;
+        const products = document.querySelectorAll('.product-item');
+        products.forEach(product => {
+            const price = parseFloat(product.querySelector('input[name="productPrice"]').value) || 0;
+            total += price;
         });
 
+        const currency = document.getElementById("total-currency").value;
+        const formattedTotal = total.toFixed(2);
+        document.getElementById("total-price").innerText = `${formattedTotal} ${currency}`;
+    }
+
+    async function generateAndDownloadPDF() {
+        const logoFile = document.getElementById('logo').files[0];
+        const companyName = document.getElementById('companyName').value;
+        const companyAddress = document.getElementById('companyAddress').value;
+        const companyTaxNumber = document.getElementById('companyTaxNumber').value;
+        const companyCrsNumber = document.getElementById('companyCrsNumber').value;
+        const targetCompanyName = document.getElementById('targetCompanyName').value;
+        const targetCompanyAddress = document.getElementById('targetCompanyAddress').value;
+        const targetTaxNumber = document.getElementById('targetTaxNumber').value;
+        const invoiceNumber = document.getElementById('invoiceNumber').value;
+        const invoiceDate = document.getElementById('invoiceDate').value;
+
+        const productList = Array.from(document.querySelectorAll('.product-item')).map(product => {
+            return {
+                name: product.querySelector('input[name="productName"]').value,
+                price: parseFloat(product.querySelector('input[name="productPrice"]').value) || 0,
+                currency: product.querySelector('select[name="currency"]').value,
+            };
+        });
+
+        const formData = new FormData();
+        
+        formData.append('logo', logoFile);
+        formData.append('companyName', companyName);
+        formData.append('companyAddress', companyAddress);
+        formData.append('companyTaxNumber', companyTaxNumber);
+        formData.append('companyCrsNumber', companyCrsNumber);
+        formData.append('targetCompanyName', targetCompanyName);
+        formData.append('targetCompanyAddress', targetCompanyAddress);
+        formData.append('targetTaxNumber', targetTaxNumber);
+        formData.append('invoiceNumber', invoiceNumber);
+        formData.append('invoiceDate', invoiceDate);
+        formData.append('products', JSON.stringify(productList));
+
+        try {
+            const response = await fetch('/generate-and-download-pdf', {
+                method: 'POST',
+                body: formData
+            });
+            if (!response.ok) throw new Error('Error generating PDF');
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `invoice_${invoiceNumber}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading PDF:', error);
+        }
+    }
+
+    async function changeAllPrices() {
+        const selectedCurrency = document.getElementById("currency-selector").value;
+        const products = document.querySelectorAll('.product-item');
+
+        for (const product of products) {
+            const priceInput = product.querySelector('input[name="productPrice"]');
+            priceInput.value = convertPrice(priceInput.value, selectedCurrency);
+        }
         calculateTotal();
     }
 
-    function toggleInvoiceNumber() {
-        const invoiceNumberInput = document.getElementById("invoiceNumber");
-        if (document.getElementById("auto-generate").checked) {
-            invoiceNumberInput.value = "INV-" + Math.floor(Math.random() * 10000);
-            invoiceNumberInput.disabled = true;
-        } else {
-            invoiceNumberInput.disabled = false;
-            invoiceNumberInput.value = "";
+    async function convertPrice(price, selectedCurrency) {
+        const exchangeRates = await exchangeRateData();
+        const currentCurrency = document.getElementById('total-currency').value;
+        if (exchangeRates[selectedCurrency] && exchangeRates[currentCurrency]) {
+            return (price * exchangeRates[selectedCurrency] / exchangeRates[currentCurrency]).toFixed(2);
         }
+        return price;
     }
-</script>
-
+  </script>
 </body>
 </html>

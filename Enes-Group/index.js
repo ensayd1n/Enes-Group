@@ -1,11 +1,13 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 const { engine } = require('express-handlebars');
 const nodemailer = require('nodemailer');
 const { sendConfirmationCode,verificationCodeConfirmation,userLoginVerification} = require('./registery');
 const { connectDB} = require('./database');
-const { fetchExchangeRateData} = require('./invoicer');
+const { fetchExchangeRateData,generatePDF} = require('./invoicer');
 require('dotenv').config({ path: './privacy.env' });
 const bodyParser = require('body-parser');
 const session = require('express-session');
@@ -28,7 +30,10 @@ app.engine(
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
 
+
+app.use('/pdf_output', express.static(path.join(__dirname, 'pdf_output')));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(session({
@@ -71,7 +76,7 @@ app.get('/invoicer', (req, res) => {
   res.render('invoicer');
 });
 app.get('/', (req, res) => {
-  res.render('home');
+  res.render('index');
 });
 
 app.post('/send-confirmation-code', async (req, res) => {
@@ -125,9 +130,55 @@ app.post('/get-exchange-rate-data', async (req, res) => {
       res.send(null);
     }
 
-  } catch (error) {
+  } catch{
     res.send(null);
   }
+});
+
+app.post('/generate-and-download-pdf', upload.single('companyLogo'), async (req, res) => {
+  try {
+      const {
+          companyName,
+          companyAddress,
+          companyTaxNumber,
+          companyCrsNumber,
+          targetCompanyName,
+          targetCompanyAddress,
+          targetTaxNumber,
+          invoiceNumber,
+          invoiceDate,
+          products
+      } = req.body;
+
+      const logoPath = req.file ? req.file.path : null; 
+
+      const parsedProducts = JSON.parse(products);
+
+      const generatedPDF = await generatePDF({
+          companyName,
+          companyAddress,
+          companyTaxNumber,
+          companyCrsNumber,
+          targetCompanyName,
+          targetCompanyAddress,
+          targetTaxNumber,
+          invoiceNumber,
+          invoiceDate,
+          logoPath: logoPath,
+          products: parsedProducts
+      });
+
+      if (generatedPDF) {
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename="invoice.pdf"');
+        res.send(generatedPDF);
+    } else {
+        res.status(500).send('PDF creation failed');
+    }
+} catch (error) {
+    console.error(error);
+    res.status(500).send('An error occurred');
+}
 });
 
 
