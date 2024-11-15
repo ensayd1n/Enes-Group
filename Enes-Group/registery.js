@@ -1,10 +1,10 @@
-const mongoose = require('mongoose');
-const { getLastInsertedData, saveUser , checkUser, saveConfirmationCode} = require('./database');
-require('dotenv').config({ path: './privacy.env' });
-const nodemailer = require('nodemailer');
+import { getLastInsertedData, saveUser, checkUser, saveConfirmationCode } from './database.js';
+import dotenv from 'dotenv';
+import nodemailer from 'nodemailer';
 
-async function sendConfirmationCode(userEmail, confirmationCode) {
-  console.log('buraya girdi mail göndermeye çalışıcak');
+dotenv.config({ path: './privacy.env' });
+
+export async function sendConfirmationCode(userEmail, confirmationCode) {
   try {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -42,7 +42,7 @@ async function sendConfirmationCode(userEmail, confirmationCode) {
   }
 }
 
-async function getConfirmationCode() {
+export async function getConfirmationCode() {
   try {
     return await getLastInsertedData();
   } catch (error) {
@@ -51,14 +51,12 @@ async function getConfirmationCode() {
   }
 }
 
-async function verificationCodeConfirmation(name, lastName, birthday, email, password, userCode) {
+export async function verificationCodeConfirmation(name, lastName, birthday, email, password, userCode) {
   try {
     const code = await getConfirmationCode();
-    console.log(userCode);
-    console.log(code);
     if (userCode === code) {
       console.log('kodlar uyuşuyor');
-      const savedUser = await saveUser(name, lastName, birthday, email, password,userCode);
+      const savedUser = await saveUser(name, lastName, birthday, email, password, userCode);
       if (savedUser) {
         console.log('User has been successfully saved to the database.');
         return true;
@@ -76,11 +74,11 @@ async function verificationCodeConfirmation(name, lastName, birthday, email, pas
   }
 }
 
-async function userLoginVerification(email, password) {
+export async function userLoginVerification(email, password) {
   try {
     const userExists = await checkUser(email, password);
 
-    if (userExists!=null) {
+    if (userExists != null) {
       console.log("The user exists in the database and its existence is verified.");
       return userExists;
     } else {
@@ -94,7 +92,81 @@ async function userLoginVerification(email, password) {
   }
 }
 
+export async function sendUserPasswordToEmail(userEmail, password) {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
 
+    await transporter.verify();
 
+    const mailBody = {
+      from: 'Aydin Group <info.aydingroup@gmail.com>',
+      to: userEmail,
+      subject: 'Verification code',
+      html: `
+      <p style="font-family: Arial, sans-serif; font-size: 16px;">
+        Dear user,<br><br>
+        Thank you for registering with Aydin Group. Here is your account password:
+        <span style="background-color: black; color: white; padding: 5px;">${password}</span>.<br><br>
 
-module.exports = { sendConfirmationCode, getConfirmationCode, verificationCodeConfirmation ,userLoginVerification};
+        Please keep this password secure and do not share it with anyone. If you did not request this account creation, please contact our support team immediately.<br><br>
+
+        Best regards,<br>
+        The Aydin Group Team
+      </p>
+      `
+    };
+
+    await transporter.sendMail(mailBody);
+    console.log('User password sent:', mailBody.to);
+    return true;
+  } catch (error) {
+    console.error('Error sending email:', error);
+    return false;
+  }
+}
+
+export async function sendEmailThatUserPasswordHasChanged(userEmail) {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+
+    await transporter.verify();
+
+    const mailBody = {
+      from: 'Aydin Group <info.aydingroup@gmail.com>',
+      to: userEmail,
+      subject: 'Verification code',
+      html: `
+      <p style="font-family: Arial, sans-serif; font-size: 16px;">
+        Dear user,<br><br>
+        We wanted to let you know that your password has been successfully changed on the Enes Group system.<br><br>
+
+        If you did not initiate this change or suspect any unauthorized activity on your account, please contact our support team immediately at <a href="mailto:support@enesgroup.com">support@enesgroup.com</a>.<br><br>
+
+        For your security, please do not share your password with anyone.<br><br>
+
+        Best regards,<br>
+        The Enes Group Team
+      </p>
+      `
+    };
+
+    await transporter.sendMail(mailBody);
+    console.log('Password change notification sent to:', mailBody.to);
+    return true;
+  } catch (error) {
+    console.error('Error sending email:', error);
+    return false;
+  }
+}

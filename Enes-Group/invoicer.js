@@ -1,13 +1,16 @@
-const axios = require('axios');
-require('dotenv').config();
-const PDFDocument = require('pdfkit');
-const fs = require('fs');
+import axios from 'axios';
+import dotenv from 'dotenv';
+import PDFDocument from 'pdfkit';
+import fs from 'fs';
+
+dotenv.config();
+
 
 
 const apiKey= process.env.EXCHANGE_API_KEY;
 const apiUri= process.env.EXCHANGE_API_URL;
 
-async function fetchExchangeRateData(){
+export async function fetchExchangeRateData(){
     try{
         const response = await axios.get(process.env.EXCHANGE_API_URL,{
             headers: {
@@ -29,7 +32,7 @@ async function fetchExchangeRateData(){
     }
 }
 
-const generatePDF = (invoiceData) => {
+export const generatePDF = (invoiceData) => {
     console.log(invoiceData);
     const { companyLogo, companyName, companyAddress, companyTaxNumber, companyCrsNumber, targetCompanyName, targetCompanyAddress, invoiceNumber, invoiceDate, products } = invoiceData;
     const doc = new PDFDocument({ margin: 50 });
@@ -94,6 +97,3 @@ const generatePDF = (invoiceData) => {
     doc.end();
     return filePath;
 };
-
-
-module.exports = { fetchExchangeRateData ,generatePDF};

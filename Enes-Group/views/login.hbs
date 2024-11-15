@@ -42,12 +42,12 @@
                     const response = await fetch('/login-check-user', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
                             email: inputEmail,
-                            password: inputPassword
-                        })
+                            password: inputPassword,
+                        }),
                     });
 
                     if (!response.ok) {
@@ -55,19 +55,23 @@
                     }
 
                     const result = await response.json();
-                    if (result === true) {
+                    
+                    if (result.success) {
+                        const token = result.token;
+                        localStorage.setItem('token', token);
+
                         document.getElementById('wrongEntry').classList.add('hidden');
                         document.getElementById('correctEntry').classList.remove('hidden');
-                        // Giriş başarılı olduğunda yönlendirme yapılabilir
                         window.location.href = '/';
                     } else {
                         document.getElementById('correctEntry').classList.add('hidden');
                         document.getElementById('wrongEntry').classList.remove('hidden');
                     }
-
                 } catch (error) {
                     console.error('Hata:', error);
                 }
+
+
             });
         });
     </script>

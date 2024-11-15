@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Sohbet Sayfası</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex justify-center items-center h-screen">
+
+    <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-6">
+        <div class="h-80 overflow-y-auto mb-4" id="chat-box">
+            
+        </div>
+        
+        <div class="flex">
+            <input type="text" id="user-input" class="flex-1 p-3 border rounded-lg mr-2" placeholder="Bir şeyler yazın...">
+            <button onclick="sendMessage()" class="px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Gönder</button>
+        </div>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById('user-input').value;
+            const chatBox = document.getElementById('chat-box');
+
+            const userMessage = document.createElement('div');
+            userMessage.classList.add('message', 'text-right', 'text-blue-600');
+            userMessage.textContent = userInput;
+            chatBox.appendChild(userMessage);
+
+            document.getElementById('user-input').value = '';
+
+            try {
+                const response = await fetch('/ask-to-gemini', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: userInput })
+                });
+
+                const data = await response.json();
+
+                const aiMessage = document.createElement('div');
+                aiMessage.classList.add('message', 'text-left', 'text-gray-800');
+                aiMessage.textContent = data.answer || 'Cevap alınamadı.';
+                chatBox.appendChild(aiMessage);
+
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } catch (error) {
+                console.error('API isteği sırasında hata oluştu:', error);
+            }
+        }
+    </script>
+
+</body>
+</html>

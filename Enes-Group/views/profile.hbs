@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="flex">
+
+    <table class="w-full h-full">
+  <tbody>
+    <tr>
+      <td class="w-52">
+        <div class="bg-gray-800 flex items-start px-2 mt-2 h-screen w-52 text-white rounded-2xl">
+          <ul class="mt-5">
+            <li class="mt-5 p-2 cursor-pointer hover:text-gray-300 font-bold text-2xl" onclick="toggleSection('profileInformation')">◦ Profile Information</li>
+            <li class="mt-1 p-2 cursor-pointer hover:text-gray-300 font-bold text-2xl" onclick="toggleSection('securityInformation')">◦ Security</li>
+            <li class="mt-1 p-2 cursor-pointer hover:text-gray-300 font-bold text-2xl" onclick="toggleSection('privacyInformation')">◦ Privacy</li>
+          </ul>
+        </div>
+      </td>
+      <td id="profileInformation" class="w-full px-10">
+  <div class="bg-gray-800 px-10 py-10 mt-2 h-screen w-full rounded-2xl">
+    <div class="bg-gray-700 h-52 w-full rounded-2xl flex items-center px-10 mb-4">
+      <table class="w-full">
+        <tbody>
+          <tr>
+            <td class="w-1/5">
+              <div class="w-44 h-44 bg-white rounded-full flex justify-center items-center hover:bg-gray-300" onclick="itemChangerAction('remove','logoChangerRequstArea')">
+                  <img id="logo" src="anonimAvatar.png" alt="Logo" class="w-40 h-40 object-cover rounded-full" />
+              </div>
+            </td>
+            <td class="w-full">
+              <div class="px-4 py-4">
+                <ul>
+                  <li>
+                    <h4 class="text-3xl font-bold text-white mb-2 mt-2"> PROFILE INFORMATIONS </h4>
+                  </li>
+                  <li>
+                    <label for="name" class="text-white text-xl font-bold">Name:</label>
+                    <input type="text" id="name" class="bg-gray-700 text-xl text-white font-bold rounded-lg px-2 py-1 ml-2" disabled placeholder="Inaccessible namespace.">
+                  </li>
+                  <li>
+                    <label for="lastName" class="text-white text-xl font-bold">Last Name:</label>
+                    <input type="text" id="lastName" class="bg-gray-700 text-xl text-white font-bold rounded-lg px-2 py-1 ml-2" disabled placeholder="Inaccessible last namespace.">
+                  </li>
+                  <li>
+                    <label for="birthday" class="text-white text-xl font-bold">Birthday:</label>
+                    <input type="text" id="birthday" class="bg-gray-700 text-xl text-white font-bold rounded-lg px-2 py-1 ml-2" disabled placeholder="Inaccessible birthday space.">
+                  </li>
+                  <li>
+                    <label for="email" class="text-white text-xl font-bold">Email:</label>
+                    <input type="text" id="email" class="bg-gray-700 text-xl text-white font-bold rounded-lg px-2 py-1 ml-2" disabled placeholder="Inaccessible email space.">
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="logoChangerRequstArea" class="bg-gray-700 h-14 w-full rounded-2xl flex items-center px-10 hidden">
+      <div class="flex space-x-4">
+        <label class="text-white text-xl font-bold py-2 px-4">Do you want to change the logo?</label>
+        <button id="changeButton" class="bg-blue-500 text-white font-bold py-2 px-4 rounded">
+            Change
+        </button>
+        <button class="bg-red-500 text-white font-bold py-2 px-4 rounded" onclick="itemChangerAction('hidden','logoChangerRequstArea')">
+            Cancel
+        </button>
+        <input type="file" id="fileInput" class="hidden" accept="image/png, image/jpeg" />
+      </div>
+    </div>
+    <div id="profile-information-notification" class="bg-green-100 h-10 w-full rounded-2xl flex items-center px-10 hidden">
+      <p class="flex items-center justify-center w-full p-2 whitespace-nowrap text-green-700 font-semibold ">
+          Your password has been successfully sent to your registered email address.
+      </p>
+    </div>
+</div>
+</td>
+      <td id="securityInformation" class="w-full px-10 hidden">
+        <div class="bg-gray-800 px-10 py-10 mt-2 h-screen w-full rounded-2xl">
+          <div class="bg-gray-700 h-52 w-full rounded-2xl flex items-center px-10 mb-4">
+            <table class="w-full">
+              <tbody>
+                <tr>
+                  <td class="w-1/5">
+                    <div class="w-52 h-52 flex justify-center items-center">
+                        <img id="logo" src="/images/password-white.png" alt="Logo" class="w-40 h-40 object-cover"/>
+                    </div>
+                  </td>
+                  <td class="w-2/5">
+                    <div class="px-4 py-4">
+                      <ul>
+                        <li>
+                          <h4 class="text-3xl font-bold text-white mb-2 mt-2"> SECURITY </h4>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                          <label for="password" class="text-white text-xl font-bold">Password:</label>
+                          <input type="password" id="password" class="bg-gray-700 text-xl text-white font-bold rounded-lg px-2 py-1 mr-2 w-20" disabled placeholder="********" />
+                          <div class="w-8 h-8 rounded-full flex justify-center items-center hover:bg-gray-50">
+                            <img id="edit-password" src="/images/edit-white.png" alt="Logo" class="w-full h-full object-cover rounded-full" onclick="itemChangerAction('remove','logoChangerRequstArea')"/>
+                          </div>
+                          <div class="w-8 h-8 rounded-full flex justify-center items-center hover:bg-gray-50" onclick="seePasswordVisibility()">
+                            <img id="eye-password" src="/images/eye-white.png" alt="Logo" class="w-full h-full object-cover rounded-full" />
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                  <td class="w-2/5">
+                      <div id="passwordChangeArea" class=" rounded-xl w-full h-44 flex justify-center items-center hidden">
+                        <div class="w-full h-full object-cover flex items-center justify-end px-4">
+                          <ul class="flex flex-col items-end">
+                            <li class="flex items-center mb-2">
+                              <label for="oldPassword" class="text-white text-xl font-bold px-2 whitespace-nowrap">Old Password:</label>
+                              <input type="password" id="oldPassword" name="oldPassword" class="bg-white w-48 h-8 rounded-lg px-2 text-gray-700 shadow-md focus:outline-none focus:ring focus:ring-gray-200 focus:bg-gray-200" required>
+                            </li>
+                            <li class="flex items-center mb-2">
+                              <label for="newPassword" class="text-white text-xl font-bold px-2 whitespace-nowrap">New Password:</label>
+                              <input type="password" id="newPassword" name="newPassword" class="bg-white w-48 h-8 rounded-lg px-2 text-gray-700 shadow-md focus:outline-none focus:ring focus:ring-gray-200 focus:bg-gray-200" required>
+                            </li>
+                            <li class="flex items-center mb-2">
+                              <label for="newPasswordConfirmation" class="text-white text-xl font-bold px-2 whitespace-nowrap">Confirm Password:</label>
+                              <input type="password" id="newPasswordConfirmation" name="newPasswordConfirmation" class="bg-white w-48 h-8 rounded-lg px-2 text-gray-700 shadow-md focus:outline-none focus:ring focus:ring-gray-200 focus:bg-gray-200" required>
+                            </li>
+                            <li class="flex items-center mb-2">
+                              <button id="changePasswordButton" class="bg-blue-500 text-white font-bold py-2 px-4 mr-4 rounded" onclick="validateAndChangePassword()">
+                                Change
+                              </button>
+                              <button class="bg-red-500 text-white font-bold py-2 px-4 rounded" onclick="itemChangerAction('hidden','passwordChangeArea')">
+                                Cancel
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div id="password-notification" class="bg-green-100 h-10 w-full rounded-2xl flex items-center px-10 hidden">
+            <p class="flex items-center justify-center w-full p-2 whitespace-nowrap text-green-700 font-semibold ">
+                    Your password has been successfully sent to your registered email address.
+            </p>
+          </div>
+        </div>
+      </td>
+      <td id="privacyInformation" class="w-full px-10 hidden">
+        <div class="bg-gray-800 flex px-10 py-10 mt-2 h-screen w-full rounded-2xl">
+          <div class="bg-gray-700 h-52 w-full rounded-2xl flex items-center px-10">
+            <h2 class="text-white text-2xl">Privacy Information</h2>
+          </div>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    <script>
+        function itemChangerAction(action,item) {
+            const logoChangerArea = document.getElementById(item);
+            if (action === 'remove') {
+                logoChangerArea.classList.remove('hidden');
+            } else if (action === 'hidden') {
+                logoChangerArea.classList.add('hidden');
+            }
+        }
+
+        function updateMessage(newText,id) {
+          const messageElement = document.getElementById(id);
+          if (messageElement) {
+            messageElement.textContent = newText;
+          }
+        }
+
+        async function seePasswordVisibility() {
+            try {
+                const response = await fetch("/see-user-password", {
+                    method: "POST",
+                });
+
+                if (!response.ok) {
+                    throw new Error("An error occurred while checking password visibility.");
+                }
+
+                const result = await response.json();
+
+                if (result === true) {
+                  updateMessage('Your password has been successfully sent to your registered email address.','password-notification');
+                  itemChangerAction('remove','password-notification');
+                  setTimeout(function() {
+                      itemChangerAction('hidden', 'password-notification');
+                  }, 2000);
+                } else {
+                  updateMessage('Your password could not be sent. Please try again.','password-notification');
+                  itemChangerAction('remove','password-notification');
+                  setTimeout(function() {
+                      itemChangerAction('hidden', 'password-notification');
+                  }, 2000);
+                }
+
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred.");
+            }
+        }
+        document.getElementById("changeButton").addEventListener("click", () => {
+            document.getElementById("fileInput").click();
+        });
+
+        document.getElementById("fileInput").addEventListener("change", async (event) => {
+          const file = event.target.files[0];
+
+          if (file) {
+              const maxSize = 5 * 1024 * 1024;
+              if (file.size > maxSize) {
+                  alert("File size cannot exceed 5MB.");
+                  return;
+              }                                                     
+              const validTypes = ["image/png", "image/jpeg"];
+              if (!validTypes.includes(file.type)) {
+                  alert("Invalid file format. Please select a PNG or JPG file.");
+                  return;
+              }
+              const formData = new FormData();
+              formData.append("image", file);
+
+              try {
+                  const response = await fetch("/set-profile-logo", {
+                      method: "POST",
+                      body: formData,
+                  });
+
+                  if (!response.ok) {
+                      throw new Error('An error occurred while uploading the image.');
+                  }
+
+                  const result = await response.json();
+                  if (result) {
+                      const logoElement = document.getElementById("logo");
+                      logoElement.src = result.logoPath;
+                      updateMessage('The image has been replaced with a successful one!','profile-information-notification');
+                      itemChangerAction('remove','profile-information-notification');
+                      itemChangerAction('hidden','logoChangerRequstArea');
+                      setTimeout(function() {
+                          itemChangerAction('hidden', 'profile-information-notification');
+                      }, 2000);
+                  } else {
+                      alert("There was an issue updating the profile image.");
+                  }
+
+              } catch (error) {
+                  console.error('Error:', error);
+                  alert("An error occurred.");
+              }
+          }
+      });
+
+      document.getElementById("edit-password").addEventListener("click",()=>{
+        AreaChangerAction('remove');
+      });
+        function toggleSection(sectionId) {
+            const sections = ['profileInformation', 'securityInformation', 'privacyInformation'];
+
+            sections.forEach(section => {
+                document.getElementById(section).classList.add('hidden');
+            });
+
+            const sectionToShow = document.getElementById(sectionId);
+            if (sectionToShow) {
+                sectionToShow.classList.remove('hidden');
+            }
+        }
+
+        async function validateAndChangePassword() {
+            const oldPasswordInput = document.getElementById('oldPassword');
+            const newPasswordInput = document.getElementById('newPassword');
+            const newPasswordConfirmationInput = document.getElementById('newPasswordConfirmation');
+
+            const oldPassword = oldPasswordInput.value;
+            const newPassword = newPasswordInput.value;
+            const newPasswordConfirmation = newPasswordConfirmationInput.value;
+
+            if (newPassword !== newPasswordConfirmation) {
+                alert('Yeni şifre ve onay şifresi eşleşmiyor!');
+                return;
+            }
+
+            const hasNumber = /\d/.test(newPassword);
+            const hasLetter = /[a-zA-Z]/.test(newPassword);
+            const hasSymbol = /[!@#$%^&*]/.test(newPassword);       
+            const hasNoSpaces = !/\s/.test(newPassword);
+            const isLongEnough = newPassword.length >= 6;
+
+            if (hasNumber && hasLetter && hasSymbol && hasNoSpaces && isLongEnough) {
+                const data = {
+                    oldPassword: oldPassword,
+                    newPassword: newPassword
+                };
+
+                try {
+                  const token = localStorage.getItem('token');
+                  if(!token){
+                    if (!token) {
+                        console.error('Token not found!');
+                        window.location.href = '/login';
+                        return;
+                    }
+                  }
+                    const response = await fetch('/user-change-password', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+
+                    if (result) {
+                        updateMessage('Your password has been changed successfully!','password-notification');
+                        itemChangerAction('remove','password-notification');
+                        setTimeout(function() {
+                            itemChangerAction('hidden', 'password-notification');
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        updateMessage('Password change failed, please try again.','password-notification');
+                        itemChangerAction('remove','password-notification');
+                        setTimeout(function() {
+                            itemChangerAction('hidden', 'password-notification');
+                        }, 2000);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred, please try again.');
+                }
+            } else {
+                alert('The new password does not meet the required criteria. Your password must: contain at least 6 characters, numbers, letters, and symbols, and no spaces.');
+            }
+        }
+
+
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        try {
+          const token = localStorage.getItem('token');
+          if(!token){
+            if (!token) {
+                console.error('Token not found!');
+                window.location.href = '/login';
+                return;
+            }
+          }
+            const response = await fetch('/get-profile-informations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Bir hata oluştu');
+            }
+
+            const result = await response.json();
+            console.log('HTML içerisindeki log: ' + result);
+            if (result != null) {
+              document.getElementById("logo").src = result.LogoPath;
+              document.getElementById("name").value = result.Name;
+              document.getElementById("lastName").value = result.LastName;
+              document.getElementById("birthday").value = result.Birthday;
+              document.getElementById("email").value = result.Email;
+
+            } else {
+                console.log("Data Fail");
+            }
+        } catch {
+            console.log("Error");
+        }
+      });
+    </script>
+</body>
+</html>

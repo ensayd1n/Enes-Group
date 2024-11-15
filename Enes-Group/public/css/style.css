@@ -261,8 +261,8 @@ a:focus {
   -webkit-transform: rotate(270.5deg) scaleX(-1);
           transform: rotate(270.5deg) scaleX(-1);
   position: absolute;
-  left: -150px;
-  top: -25px;
+  left: -200px;
+  top: 0px;
 }
 
 .slider_section .slider_heading h2 {

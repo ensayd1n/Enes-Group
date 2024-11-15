@@ -15,8 +15,11 @@
     </a>
   </div>
   <div class="flex items-center space-x-4"> 
+    <div class="bg-blue-400 rounded-lg font-Helvetica font-bold hover:text-gray-50 ml-auto px-4 h-8 shadow-lg hover:shadow-xl">
+      <a href="/chat-ai" class="font-Helvetica text-xl hover:text-gray-50">GEMINI AI</a>
+    </div>
     <div class="relative inline-block text-right"> 
-      <select id="options" name="options" class="appearance-none block w-full px-4 py-2 pr-8 leading-tight text-white bg-transparent focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 font-Helvetica">
+      <select id="options" name="options" class="appearance-none block w-full px-4 py-2 pr-8 leading-tight text-white bg-transparent focus:outline-none focus:ring-yellow-400 focus:border-yellow-400 font-Helvetica">
         <option value="1" class="text-black font-normal">Services</option>
         <option value="2" class="text-black font-normal">Youtube Converter</option>
         <option value="3" class="text-black font-normal">Document Converter</option>
@@ -28,29 +31,93 @@
       </div>
     </div>
     <a href="/profile" class="font-Helvetica hover:text-gray-50">
-      <img src="/anonimAvatar.png" class="h-10 w-10" alt="Profile">
+      <img id="userLogo" src="/anonimAvatar.png" class="h-12 w-12 rounded-full" alt="Profile">
+    </a>
+    <a href="/logout" class="font-Helvetica hover:text-gray-50 ml-auto px-4">
+      <img id="logoutAcount" src="/images/out-icon-white.png" class="h-8 w-8" alt="Logout">
     </a>
   </div>
 </nav>
     </header>
      <script>
-        const selectElement = document.getElementById('options');
-        selectElement.addEventListener('change', function() {
-            
-            const selectedValue = this.value;
-            if (selectedValue === '2') {
-                window.location.href = 'mp3-converter';
-            }
-            else if (selectedValue === '3') {
-                window.location.href = 'document-converter';
-            }
-            else if (selectedValue === '4') {
-                window.location.href = 'invoicer';
-            }
-            else if (selectedValue === '5') {
-                window.location.href = 'cv-maker';
+        
+       document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const token = localStorage.getItem('token');
+        
+        if (!token) {
+            console.error('Token bulunamadı!');
+            window.location.href = '/login';
+            return;
+        }
+
+        const response = await fetch('/get-profile-informations', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             }
         });
+
+        if (!response.ok) {
+            throw new Error('Bir hata oluştu');
+        }
+
+        const result = await response.json();
+        if (result != null) {
+            document.getElementById("userLogo").src = result.LogoPath;
+        } else {
+            console.log("Data Fail");
+        }
+    } catch (error) {
+        console.log("Error:", error);
+    }
+
+    const selectElement = document.getElementById('options');
+    selectElement.addEventListener('change', function() {
+        const selectedValue = this.value;
+        const routes = {
+            '2': 'mp3-converter',
+            '3': 'document-converter',
+            '4': 'invoicer',
+            '5': 'cv-maker'
+        };
+
+        if (routes[selectedValue]) {
+            window.location.href = routes[selectedValue];
+        }
+    });
+
+    document.getElementById('logoutAcount').addEventListener('click', async () => {
+        try {
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                console.error('Token not found!');
+                window.location.href = '/login';
+                return;
+            }
+
+            const response = await fetch('/logout-of-acount', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            } else {
+                console.error('Çıkış yapılamadı');
+            }
+        } catch (error) {
+            console.error('Bir hata oluştu:', error);
+        }
+    });
+});
+
     </script>
     <footer class="bg-yellow-400 text-white w-full fixed bottom-0 left-0">
         <nav class="container mx-auto px-4 py-2 flex justify-between items-center">
