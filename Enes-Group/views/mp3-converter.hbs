@@ -6,41 +6,76 @@
     <title>MP3 Converter</title>
 </head>
 <body>
-     <div class="rounded-lg shadow-lg w-full max-w-2xl mx-auto">
-
-
-    <form action="/convert" method="POST" class="space-y-4 bg-gray-200 py-5 px-5 rounded-md">
-    <table class="w-full">
-        <tr>
-            <td colspan="2">
-                <div class="mt-2 flex items-center">
-                    <input type="text" name="url" class="w-full h-12 border-gray-300 rounded-md shadow-md focus:ring-gray-200 focus:border-blue-500 px-4 text-lg" placeholder="Add URL">
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td class="pr-2">
-                <div>
-                    <button type="submit" class="px-20 mt-2 w-full h-8 bg-red-600 text-white focus:ring-blue-600 rounded-md shadow-md">Download</button>
-                </div>
-            </td>
-            <td class="pl-2">
-                <div>
-                    <select id="options" name="options" class="mt-2 w-full h-8 border-gray-300 rounded-md shadow-md focus:ring-blue-500 focus:border-blue-500 px-4 text-lg">
-                        <option value="1">MP3</option>
-                        <option value="2">MP4</option> 
-                    </select>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <p class="mt-1 text-sm text-gray-600 font-light">○ By using our service you agree to our terms of use</p>
-            </td>
-        </tr>
-    </table>
+<div class="rounded-lg shadow-lg w-full max-w-2xl mx-auto">
+    <form id="convert" class="space-y-4 bg-gray-200 py-5 px-5 rounded-md">
+        <table class="w-full">
+            <tr>
+                <td colspan="2">
+                    <div class="mt-2 flex items-center">
+                        <input type="text" name="url" id="mediaURL" class="w-full h-12 border-gray-300 rounded-md shadow-md focus:ring-gray-200 focus:border-blue-500 px-4 text-lg" placeholder="Add URL">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="pr-2 w-1/4">
+                    <select id="mediaType" name="mediaType" class="mt-2 w-full h-8 border-gray-300 rounded-md shadow-md focus:ring-blue-500 focus:border-blue-500 px-4 text-lg">
+                            <option value="mp3">MP3</option>
+                            <option value="mp4">MP4</option> 
+                        </select>
+                </td>
+                <td class="pl-2">
+                    <div>
+                        <button type="submit" class="px-20 mt-2 w-full h-8 bg-red-600 text-white focus:ring-blue-600 rounded-md shadow-md">Download</button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    <div>
+        <p class="mt-1 text-sm text-gray-600 font-light">○ By using our service you agree to our terms of use</p>
+    </div>
 </form>
-
 </div>
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('convert').addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const mediaURL = document.getElementById('mediaURL').value;
+        const mediaType = document.getElementById('mediaType').value;
+
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                console.log("Token is not found!");
+                window.location.href = '/login';
+                return;
+            }
+
+            const response = await fetch('/media-converter', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    mediaURL: mediaURL,
+                    mediaType: mediaType,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('An error occurred.');
+            }
+
+            const result = await response.json();
+            if (result.success) {
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    });
+});
+
+</script>
 </body>
 </html>

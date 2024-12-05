@@ -7,6 +7,8 @@ import { sendConfirmationCode, verificationCodeConfirmation, userLoginVerificati
 import { connectDB, getUserDatas, saveUserLogo, getUserPasswordandMail, updateUserPassword } from './database.js';
 import { fetchExchangeRateData, generatePDF } from './invoicer.js';
 import { hashData } from './hashProcessor.js';
+import { usersDatas ,updateUserDatas} from './admin.js';
+import {converterMedia} from './mp3-converter.js';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import session from 'express-session';
@@ -87,8 +89,11 @@ app.get('/invoicer', (req, res) => {
   res.render('invoicer');
 });
 
-app.get('/geminiai', (req, res) => {
-  res.render('geminiai');
+app.get('/chat-ai', (req, res) => {
+  res.render('chat-ai');
+});
+app.get('/admin-page', (req, res) => {
+  res.render('admin-page');
 });
 
 app.get('/', (req, res) => {
@@ -106,7 +111,6 @@ app.post('/send-confirmation-code', async (req, res) => {
     res.send(false);
   }
 });
-
 app.post('/verification-code-confirmation', async (req, res) => {
   try {
     const { name, lastName, birthday, email, password, userCode } = req.body;
@@ -117,7 +121,6 @@ app.post('/verification-code-confirmation', async (req, res) => {
     res.status(500).send('Bir hata oluştu.');
   }
 });
-
 app.post('/login-check-user', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -142,9 +145,6 @@ app.post('/login-check-user', async (req, res) => {
     res.status(500).json({ success: false });
   }
 });
-
-
-
 app.post('/logout-of-acount', async (req, res) => {
   try {
     req.session.destroy((err) => {
@@ -159,7 +159,6 @@ app.post('/logout-of-acount', async (req, res) => {
     res.send(false);
   }
 });
-
 app.post('/get-exchange-rate-data', async (req, res) => {
   try {
     const exchangeRateData = await fetchExchangeRateData();
@@ -173,7 +172,6 @@ app.post('/get-exchange-rate-data', async (req, res) => {
     res.send(null);
   }
 });
-
 app.post('/generate-and-download-pdf', upload.single('companyLogo'), async (req, res) => {
   try {
     const {
@@ -219,7 +217,6 @@ app.post('/generate-and-download-pdf', upload.single('companyLogo'), async (req,
     res.status(500).send('An error occurred');
   }
 });
-
 app.post('/get-profile-informations', async (req, res) => {
   try {
     const id = req.session.userid;
@@ -234,7 +231,6 @@ app.post('/get-profile-informations', async (req, res) => {
     res.send(null);
   }
 });
-
 app.post('/set-profile-logo', upload.single('image'), (req, res) => {
   try {
     if (req.file && req.session.userid) {
@@ -278,7 +274,6 @@ app.post('/set-profile-logo', upload.single('image'), (req, res) => {
     res.send(null);
   }
 });
-
 app.post('/see-user-password', async (req, res) => {
   try {
     const id = req.session.userid;
@@ -295,7 +290,6 @@ app.post('/see-user-password', async (req, res) => {
     res.send(false);
   }
 });
-
 app.post('/user-change-password', async (req, res) => {
   try {
     const { oldPassword, newPassword } = req.body;
@@ -311,6 +305,63 @@ app.post('/user-change-password', async (req, res) => {
     }
   } catch (error) {
     console.error('Error in /see-user-password:', error);
+    res.send(false);
+  }
+});
+app.post('/media-converter',async (req,res)=>{
+  try{
+    const {mediaURL,mediaType}=req.body;
+    const result = await converterMedia(mediaURL, mediaType);
+    if(result){
+      res.send(true);
+    }else{
+      res.send(null);
+    }
+  }catch(error){
+    res.send(null);
+  }
+});
+app.post('/get-users-datas', async (req, res) => {
+  try {
+    console.log("Fetching user data...");
+    
+    const users = await usersDatas();
+    if (users && users.length > 0) {
+      res.send(users);
+    } else {
+      res.send(null);
+    }
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    res.send(null);
+  }
+});
+app.post('/get-choosen-profile-informations', async (req, res) => {
+  try {
+    const {_id}=req.body;
+    const userInformations = await getUserDatas(_id);
+    if (userInformations != null) {
+      res.send(userInformations);
+    } else {
+      res.send(null);
+    }
+  } catch {
+    res.send(null);
+  }
+});
+app.post('/update-user-profile', async (req, res) => {
+  try {
+    const { _id, authority, firstName, lastName, email, birthday } = req.body;
+
+    const result = await updateUserDatas(_id, authority, firstName, lastName, email, birthday);
+
+    if(result){
+      res.send(true);
+    }else{
+      res.send(null);
+    }
+  } catch (error) {
+    console.error('Error in /update-user-profile:', error);
     res.send(false);
   }
 });

@@ -51,7 +51,7 @@
                     });
 
                     if (!response.ok) {
-                        throw new Error('Bir hata oluştu');
+                        throw new Error('An error occurred.');
                     }
 
                     const result = await response.json();
@@ -68,7 +68,7 @@
                         document.getElementById('wrongEntry').classList.remove('hidden');
                     }
                 } catch (error) {
-                    console.error('Hata:', error);
+                    console.error('Error:', error);
                 }
 
 

@@ -47,7 +47,6 @@ export async function saveConfirmationCode(code) {
     return false;
   }
 }
-
 export async function getLastInsertedData() {
   try {
     const collectionName = process.env.CONFIRMATION_CODES_COLLECTION_NAME;
@@ -76,9 +75,6 @@ export async function getLastInsertedData() {
     return null;
   }
 }
-
-
-
 export async function saveUser(name, lastName, birthday, email, password,userCode) {
   try {
     const url = process.env.MONGODB_URI;
@@ -114,8 +110,6 @@ export async function saveUser(name, lastName, birthday, email, password,userCod
     return false;
   }
 }
-
-
 export async function checkUser(email, password) {
   try {
     const url = process.env.MONGODB_URI;
@@ -147,7 +141,6 @@ export async function checkUser(email, password) {
     return null;
   }
 }
-
 export async function saveUserLogo(id, logoPath) {
   try {
     const url = process.env.MONGODB_URI;
@@ -179,8 +172,6 @@ export async function saveUserLogo(id, logoPath) {
     return false;
   }
 }
-
-
 export async function getUserDatas(id) {
   try {
     const url = process.env.MONGODB_URI;
@@ -202,11 +193,13 @@ export async function getUserDatas(id) {
     const result = await collection.findOne({ _id: objectId });
     if (result) {
       return {
+        _id:result._id,
         LogoPath: result.LogoPath,
         Name: result.Name,
         LastName: result.LastName,
         Birthday: result.Birthday,
-        Email: result.Email
+        Email: result.Email,
+        Authority:result.Authority
       };
     } else {
       return null;
@@ -217,7 +210,6 @@ export async function getUserDatas(id) {
     return null;
   }
 }
-
 export async function getUserPasswordandMail(id) {
   try {
     const url = process.env.MONGODB_URI;
@@ -280,6 +272,77 @@ export async function updateUserPassword(id, newPassword) {
     }
   } catch (error) {
     console.error('Error updating password:', error);
+    return null;
+  }
+}
+export async function getUsersDatas() {
+  try {
+    const url = process.env.MONGODB_URI;
+    const dbName = process.env.DATABASE_NAME;
+    const userCollectionName = process.env.USERS_COLLECTION_NAME;
+
+    if (mongoose.connection.readyState === 0) {
+      await mongoose.connect(url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      });
+    }
+
+    const db = mongoose.connection;
+    const collection = db.collection(userCollectionName);
+
+    const users = await collection.find({}, { projection: { Password: 0 } }).toArray(); 
+    if (users) {
+      const resultList = users.map((user) => ({
+        _id: user._id,
+        LogoPath: user.LogoPath,
+        Name: user.Name,
+        LastName: user.LastName,
+        Birthday: user.Birthday,
+        Email: user.Email,
+        Authority: user.Authority
+      }));
+      return resultList;
+    } else {
+      return null;
+    }
+
+  } catch (error) {
+    console.error("Error fetching users datas:", error);
+    return null;
+  }
+}
+export async function updateUserInformation(_id, authority, firstName, lastName, email, birthday) {
+  try {
+    const url = process.env.MONGODB_URI;
+    const userCollectionName = process.env.USERS_COLLECTION_NAME;
+
+    if (mongoose.connection.readyState === 0) {
+      await mongoose.connect(url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      });
+    }
+
+    const db = mongoose.connection;
+    const collection = db.collection(userCollectionName);
+
+    const result = await collection.findOneAndUpdate(
+      { _id: new ObjectId(_id) },
+      { $set: { Authority: authority, Name: firstName, LastName: lastName, Email: email, Birthday: birthday } },
+      { returnDocument: 'after' }
+    );
+
+    if (result) {
+      console.log('Data updated successfully');
+      return true;
+    } else {
+      console.log('User not found or update failed');
+      return null;
+    }
+    
+  } catch (error) {
+    console.error('Error updating user information:', error);
     return null;
   }
 }

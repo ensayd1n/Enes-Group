@@ -107,6 +107,7 @@
       </select>
     </div>
 
+
     <div class="mt-6 text-center flex justify-end">
       <button onclick="generateAndDownloadPDF()" class="px-6 py-2 bg-blue-500 text-white text-xl font-bold rounded-md hover:bg-blue-600">Save Invoice</button>
     </div>
@@ -120,8 +121,8 @@
                 headers: { 'Content-Type': 'application/json' }
             });
             if (!response.ok) throw new Error('An error occurred');
-
             const result = await response.json();
+            console.log(result);
             return result ?? {};
         } catch (error) {
             console.error('Error:', error);
@@ -160,18 +161,34 @@
         }
     }
 
-    function calculateTotal() {
+    async function calculateTotal() {
         let total = 0;
         const products = document.querySelectorAll('.product-item');
-        products.forEach(product => {
-            const price = parseFloat(product.querySelector('input[name="productPrice"]').value) || 0;
-            total += price;
-        });
 
-        const currency = document.getElementById("total-currency").value;
+        const exchangeRates = await exchangeRateData();
+
+        const selectedCurrency = document.getElementById("total-currency").value;
+        for (const product of products) {
+            const priceInput = product.querySelector('input[name="productPrice"]');
+            const currencySelect = product.querySelector('select[name="currency"]');
+            const productCurrency = currencySelect.value;
+
+            let price = parseFloat(priceInput.value) || 0;
+
+            if (price > 0) {
+                if (exchangeRates[productCurrency] && exchangeRates[selectedCurrency]) {
+                    const priceInUSD = price / exchangeRates[productCurrency];
+                    const priceInSelectedCurrency = priceInUSD * exchangeRates[selectedCurrency];
+                    total += priceInSelectedCurrency;
+                }
+            }
+        }
+
         const formattedTotal = total.toFixed(2);
-        document.getElementById("total-price").innerText = `${formattedTotal} ${currency}`;
+        document.getElementById("total-price").innerText = `${formattedTotal} ${selectedCurrency}`;
     }
+
+
 
     async function generateAndDownloadPDF() {
         const logoFile = document.getElementById('logo').files[0];
@@ -210,7 +227,7 @@
         try {
           const token = localStorage.getItem('token');
           if (!token) {
-                console.error('Token bulunamadı!');
+                console.error('Token is not found!!');
                 window.location.href = '/login';
                 return;
             }
@@ -226,6 +243,7 @@
                 localStorage.removeItem('token');
                 window.location.href = '/login';
             }else{
+              
             const blob = await response.blob();
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -242,24 +260,49 @@
     }
 
     async function changeAllPrices() {
-        const selectedCurrency = document.getElementById("currency-selector").value;
-        const products = document.querySelectorAll('.product-item');
+    const selectedCurrency = document.getElementById("currency-selector").value;
+    const products = document.querySelectorAll('.product-item');
 
-        for (const product of products) {
-            const priceInput = product.querySelector('input[name="productPrice"]');
-            priceInput.value = convertPrice(priceInput.value, selectedCurrency);
+    for (const product of products) {
+        const priceInput = product.querySelector('input[name="productPrice"]');
+        const currencySelect = product.querySelector('select[name="currency"]');
+        const currentCurrency = currencySelect.value;
+        const price = parseFloat(priceInput.value);
+
+        if (!isNaN(price) && price > 0) {
+            const priceInUSD = await convertPriceToUSD(price, currentCurrency);
+            const newPrice = await convertPriceFromUSD(priceInUSD, selectedCurrency);
+            priceInput.value = newPrice;
+            currencySelect.value = selectedCurrency;
         }
-        calculateTotal();
     }
+    calculateTotal();
+}
 
-    async function convertPrice(price, selectedCurrency) {
-        const exchangeRates = await exchangeRateData();
-        const currentCurrency = document.getElementById('total-currency').value;
-        if (exchangeRates[selectedCurrency] && exchangeRates[currentCurrency]) {
-            return (price * exchangeRates[selectedCurrency] / exchangeRates[currentCurrency]).toFixed(2);
-        }
+async function convertPriceToUSD(price, currentCurrency) {
+    const exchangeRates = await exchangeRateData();
+
+    if (exchangeRates[currentCurrency] && exchangeRates['USD']) {
+        const priceInUSD = price / exchangeRates[currentCurrency];
+        return priceInUSD;
+    } else {
+        console.error('Could not get valid currency information.');
         return price;
     }
+}
+
+async function convertPriceFromUSD(priceInUSD, targetCurrency) {
+    const exchangeRates = await exchangeRateData();
+
+    if (exchangeRates[targetCurrency] && exchangeRates['USD']) {
+        const convertedPrice = priceInUSD * exchangeRates[targetCurrency];
+        return convertedPrice.toFixed(2);
+    } else {
+        console.error('Could not get valid currency information.');
+        return priceInUSD;
+    }
+}
+
   </script>
 </body>
 </html>

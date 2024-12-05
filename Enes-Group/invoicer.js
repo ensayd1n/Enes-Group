@@ -5,18 +5,18 @@ import fs from 'fs';
 
 dotenv.config();
 
-
-
-const apiKey= process.env.EXCHANGE_API_KEY;
-const apiUri= process.env.EXCHANGE_API_URL;
-
-export async function fetchExchangeRateData(){
-    try{
-        const response = await axios.get(process.env.EXCHANGE_API_URL,{
+export async function fetchExchangeRateData() {
+    try {
+        const response = await axios.get(process.env.EXCHANGE_API_URL, {
             headers: {
                 'Authorization': `Bearer ${process.env.EXCHANGE_API_KEY}`
             }
         });
+        
+        if (!response.data || !response.data.conversion_rates) {
+            throw new Error('Invalid response format from currency API');
+        }
+
         const rates = response.data.conversion_rates;
         const selectedCurrencies = {
             USD: rates.USD,
@@ -25,24 +25,27 @@ export async function fetchExchangeRateData(){
             RUB: rates.RUB,
             CNY: rates.CNY
         };
+        
         return selectedCurrencies;
-    }catch{
-        console.error('Currency api request failed.');
+    } catch (error) {
+        console.error('Currency API request failed:', error.message);
         return null;
     }
 }
 
 export const generatePDF = (invoiceData) => {
-    console.log(invoiceData);
-    const { companyLogo, companyName, companyAddress, companyTaxNumber, companyCrsNumber, targetCompanyName, targetCompanyAddress, invoiceNumber, invoiceDate, products } = invoiceData;
+    const {
+        companyLogo, companyName, companyAddress, companyTaxNumber, companyCrsNumber,
+        targetCompanyName, targetCompanyAddress, invoiceNumber, invoiceDate, products
+    } = invoiceData;
+
     const doc = new PDFDocument({ margin: 50 });
     const filename = `invoice_${invoiceNumber}.pdf`;
     const filePath = `./pdf_output/${filename}`;
     doc.pipe(fs.createWriteStream(filePath));
 
     if (companyLogo) {
-        doc.image(companyLogo, 50, 45, { width: 100 })
-           .moveDown();
+        doc.image(companyLogo, 50, 45, { width: 100 }).moveDown();
     }
 
     doc.fontSize(20).text(companyName, { align: 'center' })
@@ -58,10 +61,7 @@ export const generatePDF = (invoiceData) => {
        .text(`Fatura Tarihi: ${invoiceDate}`, { align: 'left' })
        .moveDown(2);
 
-    const tableTop = doc.y;
-    doc.fontSize(12).text('Ürünler', 50, tableTop)
-       .moveDown(0.5);
-
+    doc.fontSize(12).text('Ürünler', 50, doc.y).moveDown(0.5);
     doc.fontSize(10).text('Ürün Adı', 50, doc.y, { width: 200, continued: true })
        .text('Adet', 250, doc.y, { width: 90, continued: true, align: 'right' })
        .text('Fiyat', 350, doc.y, { width: 90, continued: true, align: 'right' })
@@ -85,8 +85,8 @@ export const generatePDF = (invoiceData) => {
         }
     });
 
-    doc.moveDown(2)
-       .fontSize(12).text(`Toplam Tutar: ${totalAmount.toFixed(2)} TL`, { align: 'right' });
+
+    doc.moveDown(2).fontSize(12).text(`Toplam Tutar: ${totalAmount.toFixed(2)} TL`, { align: 'right' });
 
     const range = doc.bufferedPageRange();
     for (let i = 0; i < range.count; i++) {

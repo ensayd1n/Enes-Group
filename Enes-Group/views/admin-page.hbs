@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> 
+    <title>Admin Panel</title>
+<body class="bg-gray-100 min-h-screen">
+    
+    <div class="container mx-auto p-6" id="users-list">
+        <h1 class="text-2xl font-bold mb-4">Admin Panel - User List</h1>
+        <div id="userList" class="space-y-4"></div>
+    </div>
+
+<div id="choosen-user-action" class="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center w-full max-w-lg mx-auto hidden">
+    <p class="text-2xl font-bold text-center text-gray-800 mb-6">USER ACTIONS</p>
+
+    <div class="mb-4 px-4 w-full flex items-center justify-between">
+        <div class="flex items-center justify-between rounded-lg py-2 px-3">
+            <img id="userLogoValue" src="/anonimAvatar.png" alt="User Logo" class="w-16 h-16 rounded-full object-cover" onfocus="showEditIcon(this)" onblur="hideEditIcon(this)" tabindex="0">
+        </div>
+    </div>
+
+    <div class="flex items-center justify-between w-full mb-4 px-4">
+        <label for="authority" class="block text-sm font-bold text-gray-700 mb-2">Authority:</label>
+        <div class="flex items-center justify-between bg-gray-100 rounded-lg py-2 px-3 w-full" >
+            <select id="authorityValue" class="text-gray-700 bg-gray-100 border-none" disabled>
+                <option value="Admin"selected>Admin</option>
+                <option value="User">User</option>
+            </select>
+            <button type="button" class="ml-2" onclick="enableElementById('authorityValue',this)">
+                <img src="/images/edit-black.png" alt="Edit" class="w-6 h-6">
+            </button>
+        </div>
+    </div>
+
+
+    <div class="mb-4 px-4 w-full">
+        <label for="firstName" class="block text-sm font-bold text-gray-700 mb-2">First Name:</label>
+        <div class="flex items-center justify-between bg-gray-100 rounded-lg py-2 px-3">
+            <input id="firstNameValue" type="text" class="text-gray-700 bg-gray-100 border-none" value="ENES" disabled>
+            <button type="button" class="ml-2" onclick="enableElementById('firstNameValue',this)">
+                <img src="/images/edit-black.png" alt="Edit" class="w-6 h-6">
+            </button>
+        </div>
+    </div>
+
+    <div class="mb-4 px-4 w-full">
+        <label for="lastName" class="block text-sm font-bold text-gray-700 mb-2">Last Name:</label>
+        <div class="flex items-center justify-between bg-gray-100 rounded-lg py-2 px-3">
+            <input id="lastNameValue" type="text" class="text-gray-700 bg-gray-100 border-none" value="GROUP" disabled>
+            <button type="button" class="ml-2" onclick="enableElementById('lastNameValue',this)">
+                <img src="/images/edit-black.png" alt="Edit" class="w-6 h-6">
+            </button>
+        </div>
+    </div>
+
+    <div class="mb-4 px-4 w-full">
+        <label for="email" class="block text-sm font-bold text-gray-700 mb-2">Email:</label>
+        <div class="flex items-center justify-between bg-gray-100 rounded-lg py-2 px-3">
+            <input id="emailValue" type="email" class="text-gray-700 bg-gray-100 border-none" value="info.aydingroup@gmail.com" disabled>
+            <button type="button" class="ml-2" onclick="enableElementById('emailValue',this)">
+                <img src="/images/edit-black.png" alt="Edit" class="w-6 h-6">
+            </button>
+        </div>
+    </div>
+
+    <div class="mb-4 px-4 w-full">
+        <label for="birthday" class="block text-sm font-bold text-gray-700 mb-2">Birthday:</label>
+        <div class="flex items-center justify-between bg-gray-100 rounded-lg py-2 px-3">
+            <input type="date" id="birthdayValue" class="text-gray-700 bg-gray-100 border-none" value="1990-01-01" disabled>
+            <button type="button" class="ml-2" onclick="enableElementById('birthdayValue',this)">
+                <img src="/images/edit-black.png" alt="Edit" class="w-6 h-6">
+            </button>
+        </div>
+    </div>
+
+    <input type="hidden" value="${user._id}" id="user-id">
+
+    <div class="flex items-center justify-center w-full mt-4 space-x-4">
+        <button type="button" class="text-xl px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600" onclick="updateUserProfile()">
+            Save
+        </button>
+        <button type="button" class="text-xl px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600" onclick="cancelEdit()">
+            Cancel
+        </button>
+    </div>
+</div>
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", async () => {
+
+    try {
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('Token not found. Redirecting to login.');
+        }
+        const response = await fetch('/get-users-datas', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch user data');
+        }
+
+        const users = await response.json();
+        const userContainer = document.getElementById("userList");
+
+        if (users.length === 0) {
+            userContainer.innerHTML = "<p class='text-center text-gray-600'>No users found.</p>";
+            return;
+        }
+
+        users.forEach(user => {
+            const userCard = document.createElement("div");
+            userCard.className = "bg-white shadow-md rounded-lg p-4 mb-4 flex items-center space-x-4";
+
+           userCard.innerHTML = `
+                <img src="${user.LogoPath || 'anonimAvatar.png'}" alt="User Logo" class="w-16 h-16 rounded-full object-cover">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold">${user.Authority} - ${user.Name} ${user.LastName}</h3>
+                        <p class="text-gray-600"><strong>Email:</strong> ${user.Email}</p>
+                        <p class="text-gray-600"><strong>Birthday:</strong> ${user.Birthday || 'N/A'}</p>
+                    </div>
+                    <button id="action-${user._id}" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onclick="editUserInfo('${user._id}')">
+                        Action
+                    </button>
+                </div>
+            `;
+
+            userContainer.appendChild(userCard);
+        });
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        document.getElementById("userList").innerHTML = "<p class='text-center text-red-500'>Failed to load user data.</p>";
+    }
+});
+
+async function editUserInfo(userId) {
+    document.getElementById('choosen-user-action').classList.remove('hidden');
+    document.getElementById('userList').classList.add('hidden');
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('Token not found. Redirecting to login.');
+        }
+        const response = await fetch(`/get-choosen-profile-informations`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                _id: userId
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch user info');
+        }
+
+        const user = await response.json();
+        const selectElement = document.getElementById('authorityValue');
+        const options = selectElement.getElementsByTagName('option');
+
+        for (let option of options) {
+            if (option.value === user.Authority) {
+                
+                option.selected = true;
+                break;
+            }
+        }
+        document.getElementById('user-id').value=user._id|| '';
+        document.getElementById('userLogoValue').src = user.LogoPath || '/anonimAvatar.png';
+        document.getElementById('firstNameValue').value = user.Name || '';
+        document.getElementById('lastNameValue').value = user.LastName || '';
+        document.getElementById('emailValue').value = user.Email || '';
+        document.getElementById('birthdayValue').value = user.Birthday || '';
+    } catch (error) {
+        console.error('Error fetching user info:', error);
+    }
+}
+
+function enableElementById(id,button) {
+    const element = document.getElementById(id);
+        if (element) {
+            element.disabled = false;
+            element.classList.remove('bg-gray-100');
+            element.classList.add('bg-white');  
+        }
+        if (button) {
+            button.classList.add('hidden');
+        }
+}
+
+function cancelEdit() {
+    document.getElementById('userList').classList.remove('hidden');
+
+    document.getElementById('userLogoValue').src = '/images/anonimAvatar.png';
+    document.getElementById('firstNameValue').value = '';
+    document.getElementById('lastNameValue').value = '';
+    document.getElementById('emailValue').value = '';
+    document.getElementById('birthdayValue').value = '';
+
+    document.getElementById('choosen-user-action').classList.add('hidden');
+}
+
+async function updateUserProfile() {
+
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('Token not found. Redirecting to login.');
+        }
+        const response = await fetch('/update-user-profile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                _id:document.getElementById('user-id').value,
+                authority:document.getElementById('authorityValue').value,
+                firstName: document.getElementById('firstNameValue').value,
+                lastName: document.getElementById('lastNameValue').value,
+                email: document.getElementById('emailValue').value,
+                birthday: document.getElementById('birthdayValue').value
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update user info');
+        }
+
+        const result = await response.json();
+
+        if (result === true) {
+            location.reload();
+        } else {
+            console.log('Update failed');
+        }
+        
+        
+    } catch (error) {
+        console.error('Error updating user profile:', error);
+    }
+}
+</script>
+</body>
+</head>
+</html>
