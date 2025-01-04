@@ -5,7 +5,7 @@ import ffmpeg from 'fluent-ffmpeg';
 import { fileURLToPath } from 'url';
 import https from 'https';
 
-ffmpeg.setFfmpegPath('C:/msys64/mingw64/bin/ffmpeg.exe');
+ffmpeg.setFfmpegPath('C:/msys64/mingw64/bin/ffmpeg.exe'); // Eğer ffmpeg'in yolu doğruysa, problem yaratmaz
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,13 +27,15 @@ export async function converterMedia(mediaURL, mediaType) {
 
         const outputPath = path.join(downloadDir, `${videoId}.${mediaType}`);
 
-       
         const agent = new https.Agent({
             rejectUnauthorized: false
         });
 
+        let stream;
+        let outputOptions = {};
+
         if (mediaType === 'mp4') {
-            const videoStream = ytdl(mediaURL, { 
+            stream = ytdl(mediaURL, {
                 filter: 'audioandvideo',
                 requestOptions: {
                     agent,
@@ -43,16 +45,11 @@ export async function converterMedia(mediaURL, mediaType) {
                 }
             });
 
-            return new Promise((resolve, reject) => {
-                ffmpeg(videoStream)
-                    .output(outputPath)
-                    .videoCodec('libx264')
-                    .on('end', () => resolve(outputPath))
-                    .on('error', (err) => reject(err))
-                    .run();
-            });
+            outputOptions = {
+                codec: 'libx264'
+            };
         } else if (mediaType === 'mp3') {
-            const audioStream = ytdl(mediaURL, { 
+            stream = ytdl(mediaURL, {
                 filter: 'audioonly',
                 requestOptions: {
                     agent,
@@ -63,16 +60,24 @@ export async function converterMedia(mediaURL, mediaType) {
                 }
             });
 
-            return new Promise((resolve, reject) => {
-                ffmpeg(audioStream)
-                    .audioBitrate(192)
-                    .save(outputPath)
-                    .on('end', () => resolve(outputPath))
-                    .on('error', (err) => reject(err));
-            });
+            outputOptions = {
+                audioBitrate: 192
+            };
         } else {
             throw new Error('Unsupported format type.');
         }
+
+        return new Promise((resolve, reject) => {
+            ffmpeg(stream)
+                .output(outputPath)
+                .on('end', () => resolve(outputPath))
+                .on('error', (err) => {
+                    console.error('FFmpeg error:', err);
+                    reject(err);
+                })
+                .outputOptions(outputOptions)
+                .run();
+        });
     } catch (error) {
         console.error('Error:', error);
         return null;
